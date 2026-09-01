@@ -38,6 +38,7 @@ enum ReportTargetType {
   QUESTION
   ANSWER
   ADVISOR_PROFILE
+  GENERAL
 }
 
 enum ReportStatus {
@@ -55,6 +56,7 @@ model User {
   image            String?
   createdAt        DateTime         @default(now())
   isActive         Boolean          @default(true)
+  sessionsValidAfter DateTime       @default(now())
   advisorProfile   AdvisorProfile?
   forumQuestions   ForumQuestion[]
   forumAnswers     ForumAnswer[]
@@ -99,6 +101,8 @@ model ForumQuestion {
   body        String
   status      ForumQuestionStatus @default(UNANSWERED)
   createdAt   DateTime            @default(now())
+  isHidden    Boolean             @default(false)
+  isRemoved   Boolean             @default(false)
   answers     ForumAnswer[]
 
   @@index([category])
@@ -114,6 +118,8 @@ model ForumAnswer {
   body        String
   upvoteCount Int           @default(0)
   createdAt   DateTime      @default(now())
+  isHidden    Boolean             @default(false)
+  isRemoved   Boolean             @default(false)
   upvotes     Upvote[]
 }
 
@@ -188,4 +194,14 @@ model NotificationLog {
   type    String
   sentAt  DateTime @default(now())
   payload Json
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  email     String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([email])
 }
