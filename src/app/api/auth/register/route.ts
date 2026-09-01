@@ -5,7 +5,7 @@ import { Role } from "@prisma/client";
 
 export async function POST(req: NextRequest) {
   try {
-    const { fullName, email, password, role } = await req.json();
+    const { fullName, email, password, role, advisorProfile } = await req.json();
 
     if (!fullName || !email || !password || !role) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -36,6 +36,11 @@ export async function POST(req: NextRequest) {
               advisorProfile: {
                 create: {
                   verificationStatus: "PENDING",
+                  specialization: advisorProfile?.specialization || [],
+                  languages: advisorProfile?.languages || [],
+                  barEnrollment: advisorProfile?.barEnrollment || null,
+                  credentialProofUrl: advisorProfile?.credentialProofUrl || null,
+                  bio: advisorProfile?.bio || null,
                 },
               },
             }

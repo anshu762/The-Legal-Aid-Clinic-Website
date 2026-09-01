@@ -48,6 +48,30 @@ export const authOptions: NextAuthOptions = {
         token.role = user.role;
         token.verificationStatus = (user as any).verificationStatus;
       }
+      
+      // Hit DB to check if session is still valid (password change bumps sessionsValidAfter)
+      if (token.id) {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: { sessionsValidAfter: true, role: true, advisorProfile: { select: { verificationStatus: true } } },
+        });
+        
+        if (!dbUser) {
+          throw new Error("User no longer exists");
+        }
+        
+        // Ensure token was issued AFTER the sessionsValidAfter timestamp
+        // JWT 'iat' is in seconds, JS Date is in ms
+        const validAfterSeconds = Math.floor(dbUser.sessionsValidAfter.getTime() / 1000);
+        if (token.iat && (token.iat as number) < validAfterSeconds) {
+          throw new Error("Session invalid due to password change");
+        }
+        
+        // Sync role/status in case they were updated by an admin
+        token.role = dbUser.role;
+        token.verificationStatus = dbUser.advisorProfile?.verificationStatus;
+      }
+
       return token;
     },
     async session({ session, token }) {

@@ -127,7 +127,12 @@ function AuthForm() {
           </Button>
         </form>
         
-        <div className="mt-4 text-center text-sm">
+        <div className="mt-4 flex flex-col space-y-2 text-center text-sm">
+          {isLogin && (
+            <a href="/forgot-password" className="text-muted-foreground hover:text-primary transition-colors">
+              Forgot your password?
+            </a>
+          )}
           <button
             onClick={() => setIsLogin(!isLogin)}
             className="text-primary hover:underline font-medium"
