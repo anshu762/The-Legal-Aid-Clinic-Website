@@ -1,0 +1,191 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  SEEKING_HELP
+  LEGAL_ADVISOR
+  ADMIN
+}
+
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum ForumQuestionStatus {
+  UNANSWERED
+  IN_PROGRESS
+  RESOLVED
+}
+
+enum ConsultationStatus {
+  PENDING
+  MATCHED
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+enum ReportTargetType {
+  QUESTION
+  ANSWER
+  ADVISOR_PROFILE
+}
+
+enum ReportStatus {
+  OPEN
+  RESOLVED
+  DISMISSED
+}
+
+model User {
+  id               String           @id @default(uuid())
+  fullName         String
+  email            String           @unique
+  passwordHash     String?
+  role             Role             @default(SEEKING_HELP)
+  image            String?
+  createdAt        DateTime         @default(now())
+  isActive         Boolean          @default(true)
+  advisorProfile   AdvisorProfile?
+  forumQuestions   ForumQuestion[]
+  forumAnswers     ForumAnswer[]
+  upvotes          Upvote[]
+  consultationsAsRequester ConsultationRequest[] @relation("Requester")
+  consultationsAsAdvisor   ConsultationRequest[] @relation("Advisor")
+  reportsMade      Report[]         @relation("Reporter")
+  notifications    NotificationLog[]
+
+  @@index([email])
+  @@index([role])
+}
+
+model AdvisorProfile {
+  id                     String             @id @default(uuid())
+  user                   User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                 String             @unique
+  specialization         String[]
+  languages              String[]
+  yearsOfExperience      Int?
+  barEnrollment          String?
+  credentialProofUrl     String?
+  bio                    String?
+  verificationStatus     VerificationStatus @default(PENDING)
+  rejectionReason        String?
+  weeklyAvailability     Json?
+  preferredDurations     Int[]
+  isPaused               Boolean            @default(false)
+  verifiedAt             DateTime?
+  verifiedByAdminId      String?
+
+  @@index([verificationStatus])
+}
+
+model ForumQuestion {
+  id          String              @id @default(uuid())
+  author      User                @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId    String
+  isAnonymous Boolean             @default(false)
+  category    String
+  title       String
+  body        String
+  status      ForumQuestionStatus @default(UNANSWERED)
+  createdAt   DateTime            @default(now())
+  answers     ForumAnswer[]
+
+  @@index([category])
+  @@index([status])
+}
+
+model ForumAnswer {
+  id          String        @id @default(uuid())
+  question    ForumQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId  String
+  advisor     User          @relation(fields: [advisorId], references: [id], onDelete: Cascade)
+  advisorId   String
+  body        String
+  upvoteCount Int           @default(0)
+  createdAt   DateTime      @default(now())
+  upvotes     Upvote[]
+}
+
+model Upvote {
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  answer    ForumAnswer @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  answerId  String
+
+  @@unique([userId, answerId])
+}
+
+model ConsultationRequest {
+  id                     String             @id @default(uuid())
+  requester              User               @relation("Requester", fields: [requesterId], references: [id], onDelete: Cascade)
+  requesterId            String
+  preferredName          String
+  contactEmail           String
+  contactPhone           String?
+  cityState              String
+  category               String
+  description            String
+  attachmentUrl          String?
+  languages              String[]
+  requestedLengthMinutes Int
+  preferredSlots         Json
+  urgencyFlag            Boolean            @default(false)
+  status                 ConsultationStatus @default(PENDING)
+  matchedAdvisor         User?              @relation("Advisor", fields: [matchedAdvisorId], references: [id], onDelete: SetNull)
+  matchedAdvisorId       String?
+  confirmedSlot          DateTime?
+  meetingLink            String?
+  closureNote            String?
+  requesterFeedbackRating Int?
+  requesterFeedbackText  String?
+
+  @@index([status])
+  @@index([category])
+}
+
+model Report {
+  id             String           @id @default(uuid())
+  reporter       User?            @relation("Reporter", fields: [reporterId], references: [id], onDelete: SetNull)
+  reporterId     String?
+  targetType     ReportTargetType
+  targetId       String
+  reason         String
+  status         ReportStatus     @default(OPEN)
+  resolutionNote String?
+  isEmergency    Boolean          @default(false)
+  createdAt      DateTime         @default(now())
+
+  @@index([status])
+}
+
+model KnowYourRightsArticle {
+  id           String    @id @default(uuid())
+  title        String
+  category     String
+  language     String
+  bodyMarkdown String
+  pdfUrl       String?
+  publishedAt  DateTime?
+
+  @@index([category])
+}
+
+model NotificationLog {
+  id      String   @id @default(uuid())
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId  String
+  type    String
+  sentAt  DateTime @default(now())
+  payload Json
+}
