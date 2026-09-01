@@ -19,8 +19,12 @@ export async function confirmConsultationMatch(
 
   const advisor = await prisma.user.findUnique({
     where: { id: advisorId },
+    include: { advisorProfile: true }
   });
   if (!advisor) throw new Error("Advisor not found");
+  if (advisor.advisorProfile?.verificationStatus !== "VERIFIED") {
+    throw new Error("Cannot match with an unverified advisor");
+  }
 
   // Generate Jitsi Link
   const meetingLink = `https://meet.jit.si/tlc-${crypto.randomUUID()}`;
@@ -35,22 +39,23 @@ export async function confirmConsultationMatch(
     },
   });
 
-  // SIMULATE EMAILS
-  console.log(`\n\n[RESEND EMAIL STUB] Seeker Confirmation`);
-  console.log(`To: ${request.contactEmail}`);
-  console.log(`Subject: Your Consultation is Confirmed`);
-  console.log(`Body: Your request has been matched with ${advisor.fullName}.
-Meeting Link: ${meetingLink}
-Time: ${confirmedSlot.toLocaleString()}
-Please join the link at the exact time.\n`);
+  const { sendTransactionalEmail } = await import("@/lib/email/sender");
 
-  console.log(`\n[RESEND EMAIL STUB] Advisor Confirmation - STRICT PRIVACY ENFORCED`);
-  console.log(`To: ${advisor.email}`);
-  console.log(`Subject: New Consultation Match`);
-  console.log(`Body: You have been assigned a new [${request.category}] consultation.
-Meeting Link: ${meetingLink}
-Time: ${confirmedSlot.toLocaleString()}
-Seeker contact details are hidden to protect privacy until they explicitly share them.\n\n`);
+  await sendTransactionalEmail(request.requesterId, "CONSULTATION_CONFIRMATION", {
+    email: request.contactEmail,
+    name: request.preferredName,
+    meetingLink,
+    category: request.category,
+    time: confirmedSlot.toLocaleString(),
+  });
+
+  await sendTransactionalEmail(advisorId, "CONSULTATION_CONFIRMATION", {
+    email: advisor.email,
+    name: advisor.fullName, // this is the advisor's name
+    meetingLink,
+    category: request.category,
+    time: confirmedSlot.toLocaleString(),
+  });
 
   revalidatePath("/dashboard/admin/consultations");
   revalidatePath(`/dashboard/admin/consultations/${requestId}`);

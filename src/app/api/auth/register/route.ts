@@ -48,6 +48,12 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    const { sendTransactionalEmail } = await import("@/lib/email/sender");
+    await sendTransactionalEmail(user.id, "SIGNUP_CONFIRMATION", {
+      name: user.fullName,
+      email: user.email,
+    });
+
     return NextResponse.json({
       id: user.id,
       email: user.email,

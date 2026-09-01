@@ -15,6 +15,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
           <Link href="/dashboard/admin/volunteers" className="px-3 py-2 text-sm font-medium rounded-md hover:bg-muted text-foreground transition-colors">Volunteers</Link>
           <Link href="/dashboard/admin/moderation" className="px-3 py-2 text-sm font-medium rounded-md hover:bg-muted text-foreground transition-colors">Moderation</Link>
           <Link href="/dashboard/admin/consultations" className="px-3 py-2 text-sm font-medium rounded-md hover:bg-muted text-foreground transition-colors">Consultations</Link>
+          <Link href="/dashboard/admin/articles" className="px-3 py-2 text-sm font-medium rounded-md hover:bg-muted text-foreground transition-colors">Articles</Link>
           <Link href="/dashboard/admin/analytics" className="px-3 py-2 text-sm font-medium rounded-md hover:bg-muted text-foreground transition-colors">Analytics</Link>
         </nav>
       </aside>

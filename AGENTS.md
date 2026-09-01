@@ -53,3 +53,10 @@ This document provides context for any AI agent interacting with this codebase.
 - **Actions:** Admins can Dismiss, Hide, or Remove content. "Remove" hides it from the public but preserves it in the DB with an audit trail note.
 - **Proactive Admin Tools:** Admins viewing the public `/forum/[id]` page see inline "Admin Hide" and "Admin Remove" buttons to bypass the queue entirely.
 - **General Contact:** The public `/contact` form submits urgent/general inquiries directly into the Moderation Queue.
+
+### Phase 7: Admin Dashboard, Content Manager & Email Infrastructure
+- **Admin Layout & Actions:** Base structure for `/dashboard/admin` and server actions to manage volunteers.
+- **Know Your Rights CMS:** Built an admin content manager (`/dashboard/admin/articles`) to create/edit markdown articles safely. The public `/know-your-rights` page dynamically fetches and filters articles.
+- **DLSA Directory:** Added a static state-to-nearest-DLSA lookup (`lib/dlsa-directory.ts`) integrated into NALSA/DLSA explainers.
+- **Centralized Emails:** Unified transactional emails into `lib/email/sender.ts` logging to `NotificationLog` (with a new `channel` enum for future SMS/WhatsApp support). Covered events: Registration, Verification, Consultations, and Forum Answers.
+- **Database:** Added `KnowYourRightsArticle.slug` (unique), `NotificationChannel` enum, and `PasswordResetToken` for secure password recovery.

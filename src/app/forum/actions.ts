@@ -45,7 +45,7 @@ export async function submitAnswer(questionId: string, body: string) {
   }
 
   // Use a transaction to ensure we update the question status atomically
-  await prisma.$transaction(async (tx) => {
+  const question = await prisma.$transaction(async (tx) => {
     await tx.forumAnswer.create({
       data: {
         body,
@@ -54,18 +54,32 @@ export async function submitAnswer(questionId: string, body: string) {
       },
     });
 
-    const question = await tx.forumQuestion.findUnique({
+    const q = await tx.forumQuestion.findUnique({
       where: { id: questionId },
-      select: { status: true },
+      include: { author: true }
     });
 
-    if (question?.status === "UNANSWERED") {
+    if (q?.status === "UNANSWERED") {
       await tx.forumQuestion.update({
         where: { id: questionId },
         data: { status: "IN_PROGRESS" },
       });
     }
+    
+    return q;
   });
+
+  if (question && question.author) {
+    const { sendTransactionalEmail } = await import("@/lib/email/sender");
+    const link = `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/forum/${question.id}`;
+    
+    await sendTransactionalEmail(question.author.id, "QUESTION_ANSWERED", {
+      email: question.author.email,
+      name: question.author.fullName,
+      questionTitle: question.title,
+      answerLink: link,
+    });
+  }
 
   revalidatePath(`/forum/${questionId}`);
   revalidatePath("/forum");

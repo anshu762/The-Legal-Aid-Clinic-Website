@@ -175,16 +175,25 @@ model Report {
   @@index([status])
 }
 
+enum NotificationChannel {
+  EMAIL
+  SMS
+  WHATSAPP
+}
+
 model KnowYourRightsArticle {
   id           String    @id @default(uuid())
+  slug         String    @unique
   title        String
   category     String
   language     String
   bodyMarkdown String
   pdfUrl       String?
+  isActive     Boolean   @default(true)
   publishedAt  DateTime?
 
   @@index([category])
+  @@index([slug])
 }
 
 model NotificationLog {
@@ -192,6 +201,7 @@ model NotificationLog {
   user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId  String
   type    String
+  channel NotificationChannel @default(EMAIL)
   sentAt  DateTime @default(now())
   payload Json
 }

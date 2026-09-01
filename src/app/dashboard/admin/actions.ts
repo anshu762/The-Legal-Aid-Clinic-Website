@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/roles";
 import { revalidatePath } from "next/cache";
 
+import { sendTransactionalEmail } from "@/lib/email/sender";
+
 export async function approveAdvisor(advisorId: string) {
   const session = await requireRole(["ADMIN"]);
 
@@ -24,10 +26,10 @@ export async function approveAdvisor(advisorId: string) {
     },
   });
 
-  console.log(`\n\n[RESEND EMAIL STUB] Advisor Approved`);
-  console.log(`To: ${user.email}`);
-  console.log(`Subject: Your Legal Aid Clinic Application is Approved!`);
-  console.log(`Body: You have been verified and can now answer questions.\n\n`);
+  await sendTransactionalEmail(user.id, "VOLUNTEER_APPROVAL", {
+    name: user.fullName,
+    email: user.email,
+  });
 
   revalidatePath("/dashboard/admin/volunteers");
   revalidatePath(`/dashboard/admin/volunteers/${advisorId}`);
@@ -56,10 +58,11 @@ export async function rejectAdvisor(advisorId: string, reason: string) {
     },
   });
 
-  console.log(`\n\n[RESEND EMAIL STUB] Advisor Rejected`);
-  console.log(`To: ${user.email}`);
-  console.log(`Subject: Update on your Legal Aid Clinic Application`);
-  console.log(`Body: We could not approve your application at this time. Reason: ${reason}\n\n`);
+  await sendTransactionalEmail(user.id, "VOLUNTEER_REJECTION", {
+    name: user.fullName,
+    email: user.email,
+    reason,
+  });
 
   revalidatePath("/dashboard/admin/volunteers");
   revalidatePath(`/dashboard/admin/volunteers/${advisorId}`);

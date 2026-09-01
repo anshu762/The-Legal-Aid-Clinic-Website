@@ -43,7 +43,8 @@ async function runCron() {
           userId: cons.requesterId, // just using requesterId to anchor the log
           type: reminderType,
           payload: {
-            equals: { consultationId: cons.id }
+            path: ['consultationId'],
+            equals: cons.id
           }
         }
       });
@@ -51,24 +52,27 @@ async function runCron() {
       if (!existingLog) {
         console.log(`\n\n[CRON DISPATCH] ${reminderType} for Consultation ${cons.id}`);
         
-        // Log it to prevent duplicates
-        await prisma.notificationLog.create({
-          data: {
-            userId: cons.requesterId,
-            type: reminderType,
-            payload: { consultationId: cons.id }
-          }
+        const eventType = reminderType === "24H_REMINDER" ? "CONSULTATION_REMINDER_24H" : "CONSULTATION_REMINDER_1H";
+
+        const { sendTransactionalEmail } = await import("../src/lib/email/sender");
+        
+        // Seeker Email
+        await sendTransactionalEmail(cons.requesterId, eventType, {
+          email: cons.contactEmail,
+          name: cons.preferredName,
+          meetingLink: cons.meetingLink || "",
+          time: cons.confirmedSlot.toLocaleString(),
+          consultationId: cons.id,
         });
 
-        // Email Seeker
-        console.log(`To: ${cons.contactEmail}`);
-        console.log(`Subject: Reminder: Your Legal Consultation is in ${reminderType === "24H_REMINDER" ? "24 hours" : "1 hour"}`);
-        console.log(`Body: Your meeting with ${cons.matchedAdvisor.fullName} is coming up. Link: ${cons.meetingLink}`);
-
-        // Email Advisor (STRICT PRIVACY)
-        console.log(`\nTo: ${cons.matchedAdvisor.email}`);
-        console.log(`Subject: Reminder: Upcoming Consultation`);
-        console.log(`Body: You have a [${cons.category}] consultation starting soon. Link: ${cons.meetingLink}\n\n`);
+        // Advisor Email
+        await sendTransactionalEmail(cons.matchedAdvisor.id, eventType, {
+          email: cons.matchedAdvisor.email,
+          name: cons.matchedAdvisor.fullName,
+          meetingLink: cons.meetingLink || "",
+          time: cons.confirmedSlot.toLocaleString(),
+          consultationId: cons.id,
+        });
       }
     }
   }
