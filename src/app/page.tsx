@@ -83,17 +83,17 @@ export default function Home() {
       <section id="mission" className="py-24 bg-background scroll-mt-20">
         <div className="container max-w-7xl mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-16 items-center">
-            <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="relative h-[400px] rounded-3xl overflow-hidden shadow-sm bg-muted/50 border border-border">
+            <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="relative h-[400px] rounded-3xl overflow-hidden shadow-sm bg-primary border border-border">
               {/* Using a beautiful Unsplash image for Justice/Mission */}
               <img 
                 src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=800&q=80" 
                 alt="Our Mission" 
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover grayscale opacity-90"
               />
-              <div className="absolute inset-0 bg-primary/10 mix-blend-multiply" />
+              <div className="absolute inset-0 bg-primary/40 mix-blend-multiply" />
             </motion.div>
             <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="space-y-8">
-              <div className="inline-flex items-center rounded-full bg-accent/10 px-3 py-1 text-sm font-medium text-accent">Our Mission</div>
+              <div className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">Our Mission</div>
               <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
                 Bridging the justice gap for everyone.
               </h2>
