@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle2 } from "lucide-react";
+import { VerifiedBadge } from "@/components/ui/VerifiedBadge";
 
 export const revalidate = 3600; // Cache for 1 hour
 
@@ -65,14 +65,14 @@ export default async function VolunteersPage() {
                 
                 <div className="flex items-center gap-2 mb-1">
                   <h3 className="text-xl font-bold text-foreground">{volunteer.fullName}</h3>
-                  <CheckCircle2 className="h-5 w-5 text-primary" aria-label="Verified" />
+                  <VerifiedBadge />
                 </div>
                 
                 <div className="mt-6 w-full space-y-4">
                   <div>
                     <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Specializations</h4>
                     <div className="flex flex-wrap gap-2">
-                      {volunteer.advisorProfile?.specialization.map(spec => (
+                      {volunteer.advisorProfile?.specialization.map((spec: string) => (
                         <Badge key={spec} variant="outline" className="bg-primary/5 text-primary border-primary/20 hover:bg-primary/10 font-normal">
                           {spec}
                         </Badge>
@@ -86,7 +86,7 @@ export default async function VolunteersPage() {
                   <div>
                     <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Languages</h4>
                     <div className="flex flex-wrap gap-2">
-                      {volunteer.advisorProfile?.languages.map(lang => (
+                      {volunteer.advisorProfile?.languages.map((lang: string) => (
                         <Badge key={lang} variant="secondary" className="font-normal">
                           {lang}
                         </Badge>
