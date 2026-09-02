@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { MatchForm } from "./MatchForm";
+import { BackButton } from "@/components/ui/back-button";
 
 export default async function AdminConsultationDetailPage({
   params,
@@ -64,11 +65,9 @@ export default async function AdminConsultationDetailPage({
 
   return (
     <div className="space-y-6 max-w-5xl">
+      <BackButton />
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold font-serif">Consultation Review</h1>
-        <Button variant="outline" asChild>
-          <Link href="/dashboard/admin/consultations">Back to List</Link>
-        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -120,7 +119,7 @@ export default async function AdminConsultationDetailPage({
                 <div>
                   <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-1">Attachment</h3>
                   <Button asChild variant="outline" size="sm">
-                    <a href={`/api/attachments/${request.attachmentUrl}`} target="_blank" rel="noopener noreferrer">
+                    <a href={request.attachmentUrl} target="_blank" rel="noopener noreferrer">
                       View Secure Attachment
                     </a>
                   </Button>

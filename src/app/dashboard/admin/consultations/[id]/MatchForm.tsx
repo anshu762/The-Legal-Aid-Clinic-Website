@@ -15,26 +15,27 @@ export function MatchForm({
   preferredSlots: string[]
 }) {
   const router = useRouter();
-  const [selectedAdvisorId, setSelectedAdvisorId] = useState("");
-  const [selectedSlot, setSelectedSlot] = useState("");
+  const { showAlert } = useAlertModal();
+  const [selectedAdvisorId, setSelectedAdvisorId] = useState<string>("");
+  const [selectedSlot, setSelectedSlot] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedAdvisorId || !selectedSlot) {
-      alert("Please select both an advisor and a time slot.");
+      showAlert("Missing Details", "Please select both an advisor and a time slot.", "error");
       return;
     }
     
     setLoading(true);
     try {
       await confirmConsultationMatch(requestId, selectedAdvisorId, new Date(selectedSlot));
-      alert("Match confirmed and emails sent!");
+      showAlert("Match Confirmed!", "The match has been confirmed and emails have been sent.", "success");
       router.refresh();
     } catch (err: any) {
-      alert("Failed to confirm: " + err.message);
-      setLoading(false);
+      showAlert("Error", "Failed to confirm: " + err.message, "error");
     }
+    setLoading(false);
   };
 
   return (

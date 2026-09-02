@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -9,13 +10,14 @@ import { Button } from "@/components/ui/button";
 
 export function Navbar() {
   const { data: session } = useSession();
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
   const links = [
-    { href: "/about", label: "Our Mission" },
-    { href: "/know-your-rights", label: "Know Your Rights" },
-    { href: "/faq", label: "FAQ" },
-    { href: "/volunteers", label: "Volunteers" },
+    { href: "/#mission", label: "Our Mission" },
+    { href: "/#know-your-rights", label: "Know Your Rights" },
+    { href: "/#faq", label: "FAQ" },
+    { href: "/#volunteers", label: "Volunteers" },
   ];
 
   return (
@@ -26,7 +28,7 @@ export function Navbar() {
             TLC.
           </Link>
           <div className="hidden md:flex gap-6 text-sm font-medium">
-            {links.map((link) => (
+            {pathname === "/" && links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -77,7 +79,7 @@ export function Navbar() {
             className="md:hidden border-b border-border bg-background"
           >
             <div className="flex flex-col px-4 py-4 space-y-4">
-              {links.map((link) => (
+              {pathname === "/" && links.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -87,7 +89,7 @@ export function Navbar() {
                   {link.label}
                 </Link>
               ))}
-              <div className="h-px bg-border my-2" />
+              {pathname === "/" && <div className="h-px bg-border my-2" />}
               {session ? (
                 <>
                   <Link href="/dashboard" onClick={() => setIsOpen(false)} className="text-sm font-medium">

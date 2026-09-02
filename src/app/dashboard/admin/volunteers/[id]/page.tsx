@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { VolunteerActions } from "./VolunteerActions";
 
+import { BackButton } from "@/components/ui/back-button";
+
 export default async function AdminVolunteerDetailPage({
   params,
 }: {
@@ -28,6 +30,7 @@ export default async function AdminVolunteerDetailPage({
 
   return (
     <div className="space-y-6 max-w-4xl">
+      <BackButton />
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold font-serif">Review Application</h1>
         <Button variant="outline" asChild>

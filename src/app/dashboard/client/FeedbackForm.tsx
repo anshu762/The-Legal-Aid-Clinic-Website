@@ -4,7 +4,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { saveFeedback } from "./actions";
 
+import { useAlertModal } from "@/components/ui/alert-modal";
+
 export function FeedbackForm({ consultationId, initialRating, initialText }: { consultationId: string, initialRating: number, initialText: string }) {
+  const { showAlert } = useAlertModal();
   const [rating, setRating] = useState(initialRating);
   const [text, setText] = useState(initialText);
   const [loading, setLoading] = useState(false);
@@ -16,9 +19,10 @@ export function FeedbackForm({ consultationId, initialRating, initialText }: { c
     try {
       await saveFeedback(consultationId, rating, text);
       setSaved(true);
+      showAlert("Success", "Your feedback has been saved.", "success");
       setTimeout(() => setSaved(false), 2000);
     } catch (err) {
-      alert("Failed to save feedback");
+      showAlert("Error", "Failed to save feedback.", "error");
     }
     setLoading(false);
   };
@@ -68,7 +72,7 @@ export function FeedbackForm({ consultationId, initialRating, initialText }: { c
       
       <div className="flex justify-between items-center">
         <span className="text-xs text-green-600 font-medium">{saved ? "Saved!" : ""}</span>
-        <Button type="submit" size="sm" disabled={loading || rating === 0}>
+        <Button type="submit" size="sm" isLoading={loading} disabled={rating === 0}>
           {loading ? "Saving..." : "Submit Feedback"}
         </Button>
       </div>

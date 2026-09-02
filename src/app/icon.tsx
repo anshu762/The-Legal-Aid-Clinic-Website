@@ -1,0 +1,39 @@
+import { ImageResponse } from "next/og";
+
+// Route segment config
+export const runtime = "edge";
+
+// Image metadata
+export const size = {
+  width: 32,
+  height: 32,
+};
+export const contentType = "image/png";
+
+// Image generation
+export default function Icon() {
+  return new ImageResponse(
+    (
+      // ImageResponse JSX element
+      <div
+        style={{
+          fontSize: 24,
+          background: "#0f172a", // slate-900 (deep blue)
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#fbbf24", // amber-400 (gold scales)
+          borderRadius: "8px",
+          fontWeight: 900,
+        }}
+      >
+        ⚖
+      </div>
+    ),
+    {
+      ...size,
+    }
+  );
+}

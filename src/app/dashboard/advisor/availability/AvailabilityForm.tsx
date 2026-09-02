@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { updateAvailability } from "@/app/dashboard/advisor/actions";
 import { useRouter } from "next/navigation";
 
+import { useAlertModal } from "@/components/ui/alert-modal";
+
 export function AvailabilityForm({ 
   initialIsPaused, 
   initialSchedule, 
@@ -15,6 +17,7 @@ export function AvailabilityForm({
   initialDurations: number[] 
 }) {
   const router = useRouter();
+  const { showAlert } = useAlertModal();
   const [isPaused, setIsPaused] = useState(initialIsPaused);
   const [schedule, setSchedule] = useState(initialSchedule);
   
@@ -43,10 +46,11 @@ export function AvailabilityForm({
         weeklyAvailability: schedule,
         preferredDurations: durations,
       });
-      alert("Availability updated!");
+      showAlert("Success!", "Your availability preferences have been saved.", "success");
+      router.push("/dashboard/advisor");
       router.refresh();
     } catch (e) {
-      alert("Failed to update");
+      showAlert("Error", "Failed to update availability. Please try again.", "error");
     }
     setLoading(false);
   };
@@ -104,7 +108,7 @@ export function AvailabilityForm({
       </div>
 
       <div className="flex justify-end pt-4 border-t border-border">
-        <Button type="submit" disabled={loading}>
+        <Button type="submit" isLoading={loading}>
           {loading ? "Saving..." : "Save Preferences"}
         </Button>
       </div>

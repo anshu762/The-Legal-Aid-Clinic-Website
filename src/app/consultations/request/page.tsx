@@ -8,6 +8,8 @@ import * as z from "zod";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { BackButton } from "@/components/ui/back-button";
+import { useAlertModal } from "@/components/ui/alert-modal";
 import { createConsultationRequest } from "../actions";
 
 const formSchema = z.object({
@@ -29,6 +31,7 @@ export default function RequestConsultationPage() {
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { showAlert } = useAlertModal();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -65,7 +68,7 @@ export default function RequestConsultationPage() {
           const data = await res.json();
           attachmentUrl = `/api/attachments/${data.filename}`;
         } else {
-          alert("Failed to upload attachment");
+          showAlert("Upload Failed", "Failed to upload attachment", "error");
           setIsSubmitting(false);
           return;
         }
@@ -85,10 +88,11 @@ export default function RequestConsultationPage() {
         attachmentUrl: attachmentUrl || undefined,
       });
 
+      showAlert("Request Submitted!", "Your consultation request has been successfully placed.", "success");
       router.push("/dashboard/client");
     } catch (error) {
       console.error(error);
-      alert("Something went wrong");
+      showAlert("Error", "Something went wrong while submitting your request.", "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -96,6 +100,7 @@ export default function RequestConsultationPage() {
 
   return (
     <div className="container max-w-2xl mx-auto py-10">
+      <BackButton />
       <Card>
         <CardHeader>
           <CardTitle>Request a Consultation</CardTitle>
@@ -193,7 +198,7 @@ export default function RequestConsultationPage() {
             </div>
 
             <div className="pt-4 flex items-center p-6 bg-transparent">
-              <Button type="submit" disabled={isSubmitting}>
+              <Button type="submit" isLoading={isSubmitting}>
                 {isSubmitting ? "Submitting..." : "Submit Request"}
               </Button>
             </div>

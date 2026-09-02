@@ -3,9 +3,12 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toggleUpvote, markResolved, submitAnswer } from "@/app/forum/actions";
+import { useAlertModal } from "@/components/ui/alert-modal";
+import { useRouter } from "next/navigation";
 
-export function UpvoteButton({ answerId, initialCount, initiallyUpvoted }: { answerId: string, initialCount: number, initiallyUpvoted: boolean }) {
-  const [upvoted, setUpvoted] = useState(initiallyUpvoted);
+export function UpvoteButton({ answerId, initialCount, initialUpvoted }: { answerId: string, initialCount: number, initialUpvoted: boolean }) {
+  const { showAlert } = useAlertModal();
+  const [upvoted, setUpvoted] = useState(initialUpvoted);
   const [count, setCount] = useState(initialCount);
   const [loading, setLoading] = useState(false);
 
@@ -24,7 +27,7 @@ export function UpvoteButton({ answerId, initialCount, initiallyUpvoted }: { ans
       // Revert on failure
       setUpvoted(upvoted);
       setCount(initialCount);
-      alert("Failed to upvote. Make sure you are logged in.");
+      showAlert("Error", "Failed to upvote. Make sure you are logged in.", "error");
     } finally {
       setLoading(false);
     }
@@ -45,15 +48,18 @@ export function UpvoteButton({ answerId, initialCount, initiallyUpvoted }: { ans
 }
 
 export function MarkResolvedButton({ questionId }: { questionId: string }) {
+  const { showAlert, showConfirm } = useAlertModal();
   const [loading, setLoading] = useState(false);
 
   const handleResolve = async () => {
-    if (!confirm("Are you sure you want to mark this question as resolved?")) return;
+    const confirmed = await showConfirm("Mark as Resolved?", "Are you sure you want to mark this question as resolved?");
+    if (!confirmed) return;
     setLoading(true);
     try {
       await markResolved(questionId);
+      showAlert("Resolved", "The question has been marked as resolved.", "success");
     } catch (e) {
-      alert("Failed to mark resolved.");
+      showAlert("Error", "Failed to mark resolved.", "error");
       setLoading(false);
     }
   };
@@ -70,6 +76,9 @@ export function AnswerForm({ questionId }: { questionId: string }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const { showAlert } = useAlertModal();
+  const router = useRouter();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (body.trim().length < 20) {
@@ -83,6 +92,8 @@ export function AnswerForm({ questionId }: { questionId: string }) {
     try {
       await submitAnswer(questionId, body);
       setBody("");
+      showAlert("Answer Submitted", "Your answer has been posted successfully.", "success");
+      router.refresh();
     } catch (err: any) {
       setError(err.message || "Failed to submit answer.");
     } finally {

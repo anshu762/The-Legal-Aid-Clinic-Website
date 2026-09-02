@@ -3,17 +3,27 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
+import { FileText, Plus } from "lucide-react";
+
 export default async function AdminArticlesPage() {
   const articles = await prisma.knowYourRightsArticle.findMany({
     orderBy: { title: 'asc' }
   });
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold font-serif">Articles Manager</h1>
+    <div className="space-y-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold font-serif flex items-center gap-2">
+            <FileText className="w-8 h-8 text-primary" />
+            Articles Manager
+          </h1>
+          <p className="text-muted-foreground mt-1">Create and manage content for the Know Your Rights section.</p>
+        </div>
         <Link href="/dashboard/admin/articles/new">
-          <Button>Create Article</Button>
+          <Button className="flex items-center gap-2">
+            <Plus className="w-4 h-4" /> Create Article
+          </Button>
         </Link>
       </div>
 

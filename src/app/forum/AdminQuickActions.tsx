@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { proactiveAdminAction } from "@/app/dashboard/admin/moderation/actions";
 import { useRouter } from "next/navigation";
+import { useAlertModal } from "@/components/ui/alert-modal";
 
 export function AdminQuickActions({ 
   targetType, 
@@ -13,18 +14,20 @@ export function AdminQuickActions({
   targetId: string 
 }) {
   const router = useRouter();
+  const { showAlert, showPrompt } = useAlertModal();
   const [loading, setLoading] = useState(false);
 
   const handleAction = async (action: "HIDE" | "REMOVE") => {
-    const reason = prompt(`Reason for ${action.toLowerCase()}?`);
+    const reason = await showPrompt("Reason Required", `Reason for ${action.toLowerCase()}?`);
     if (!reason) return;
     
     setLoading(true);
     try {
       await proactiveAdminAction(targetType, targetId, action, reason);
+      showAlert("Success", `${targetType} has been ${action === "HIDE" ? "hidden" : "removed"}.`, "success");
       router.refresh();
     } catch (e: any) {
-      alert("Failed: " + e.message);
+      showAlert("Error", "Failed: " + e.message, "error");
     }
     setLoading(false);
   };

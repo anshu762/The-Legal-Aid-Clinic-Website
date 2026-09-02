@@ -4,8 +4,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { reportItem } from "@/app/forum/actions";
 import { ReportTargetType } from "@prisma/client";
+import { useAlertModal } from "@/components/ui/alert-modal";
 
 export function ReportDialog({ targetType, targetId }: { targetType: "QUESTION" | "ANSWER" | "ADVISOR_PROFILE", targetId: string }) {
+  const { showAlert } = useAlertModal();
   const [isOpen, setIsOpen] = useState(false);
   const [reason, setReason] = useState("");
   const [note, setNote] = useState("");
@@ -24,7 +26,7 @@ export function ReportDialog({ targetType, targetId }: { targetType: "QUESTION" 
       setSuccess(true);
       setTimeout(() => setIsOpen(false), 2000);
     } catch (error) {
-      alert("Failed to submit report. Please log in.");
+      showAlert("Error", "Failed to submit report. Please log in.", "error");
     } finally {
       setIsSubmitting(false);
     }

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { approveAdvisor, rejectAdvisor, toggleAdvisorActive } from "@/app/dashboard/admin/actions";
 import { useRouter } from "next/navigation";
+import { useAlertModal } from "@/components/ui/alert-modal";
 
 export function VolunteerActions({ 
   advisorId, 
@@ -14,40 +15,48 @@ export function VolunteerActions({
   status: string, 
   isActive: boolean 
 }) {
-  const router = useRouter();
+  const { showAlert, showConfirm, showPrompt } = useAlertModal();
   const [loading, setLoading] = useState(false);
 
   const handleApprove = async () => {
-    if (!confirm("Approve this advisor?")) return;
+    const confirmed = await showConfirm("Approve Advisor?", "Are you sure you want to approve this application?");
+    if (!confirmed) return;
+    
     setLoading(true);
     try {
       await approveAdvisor(advisorId);
+      showAlert("Approved", "The advisor has been approved and notified.", "success");
     } catch (e) {
-      alert("Error approving");
+      showAlert("Error", "Failed to approve advisor.", "error");
     }
     setLoading(false);
   };
 
   const handleReject = async () => {
-    const reason = prompt("Enter rejection reason (will be emailed to the user):");
+    const reason = await showPrompt("Reject Application", "Enter rejection reason (will be emailed to the user):");
     if (!reason) return;
+    
     setLoading(true);
     try {
       await rejectAdvisor(advisorId, reason);
+      showAlert("Rejected", "The application was rejected and the user was notified.", "success");
     } catch (e) {
-      alert("Error rejecting");
+      showAlert("Error", "Failed to reject advisor.", "error");
     }
     setLoading(false);
   };
 
   const handleToggleActive = async () => {
     const action = isActive ? "Deactivate" : "Reactivate";
-    if (!confirm(`Are you sure you want to ${action} this account?`)) return;
+    const confirmed = await showConfirm(`${action} Account`, `Are you sure you want to ${action.toLowerCase()} this account?`);
+    if (!confirmed) return;
+    
     setLoading(true);
     try {
       await toggleAdvisorActive(advisorId, !isActive);
+      showAlert("Success", `Account has been ${action.toLowerCase()}d.`, "success");
     } catch (e) {
-      alert(`Error ${action.toLowerCase()}ing`);
+      showAlert("Error", `Failed to ${action.toLowerCase()} account.`, "error");
     }
     setLoading(false);
   };

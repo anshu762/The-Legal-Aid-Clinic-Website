@@ -3,6 +3,8 @@ import { requireRole } from "@/lib/roles";
 import { Card } from "@/components/ui/card";
 import { ReportRow } from "./ReportRow";
 
+import { AlertTriangle } from "lucide-react";
+
 export default async function ModerationQueuePage() {
   await requireRole(["ADMIN"]);
 
@@ -18,9 +20,13 @@ export default async function ModerationQueuePage() {
   });
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold font-serif">Moderation Queue</h1>
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-3xl font-bold font-serif flex items-center gap-2">
+          <AlertTriangle className="w-8 h-8 text-primary" />
+          Moderation Queue
+        </h1>
+        <p className="text-muted-foreground mt-1">Review and resolve flagged content and user reports.</p>
       </div>
 
       <Card className="shadow-sm border-border overflow-hidden">

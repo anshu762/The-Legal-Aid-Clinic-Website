@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
+import { Users, Filter, CheckCircle2, AlertCircle, Clock } from "lucide-react";
+
 export default async function AdminVolunteersPage({
   searchParams,
 }: {
@@ -26,21 +28,36 @@ export default async function AdminVolunteersPage({
   });
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold font-serif">Volunteer Roster</h1>
-        <div className="flex gap-2">
-          <Button variant={!statusFilter ? "default" : "outline"} asChild size="sm">
-            <Link href="/dashboard/admin/volunteers">All</Link>
+    <div className="space-y-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold font-serif flex items-center gap-2">
+            <Users className="w-8 h-8 text-primary" />
+            Volunteer Roster
+          </h1>
+          <p className="text-muted-foreground mt-1">Manage and verify legal advisors on the platform.</p>
+        </div>
+        
+        <div className="flex bg-muted/30 p-1 rounded-lg border border-border">
+          <Button variant={!statusFilter ? "secondary" : "ghost"} asChild size="sm" className="h-8">
+            <Link href="/dashboard/admin/volunteers">
+              <Filter className="w-4 h-4 mr-2" /> All
+            </Link>
           </Button>
-          <Button variant={statusFilter === "PENDING" ? "default" : "outline"} asChild size="sm">
-            <Link href="/dashboard/admin/volunteers?status=PENDING">Pending</Link>
+          <Button variant={statusFilter === "PENDING" ? "secondary" : "ghost"} asChild size="sm" className="h-8 text-yellow-600 hover:text-yellow-700 hover:bg-yellow-100/50">
+            <Link href="/dashboard/admin/volunteers?status=PENDING">
+              <Clock className="w-4 h-4 mr-2" /> Pending
+            </Link>
           </Button>
-          <Button variant={statusFilter === "VERIFIED" ? "default" : "outline"} asChild size="sm">
-            <Link href="/dashboard/admin/volunteers?status=VERIFIED">Verified</Link>
+          <Button variant={statusFilter === "VERIFIED" ? "secondary" : "ghost"} asChild size="sm" className="h-8 text-green-600 hover:text-green-700 hover:bg-green-100/50">
+            <Link href="/dashboard/admin/volunteers?status=VERIFIED">
+              <CheckCircle2 className="w-4 h-4 mr-2" /> Verified
+            </Link>
           </Button>
-          <Button variant={statusFilter === "REJECTED" ? "default" : "outline"} asChild size="sm">
-            <Link href="/dashboard/admin/volunteers?status=REJECTED">Rejected</Link>
+          <Button variant={statusFilter === "REJECTED" ? "secondary" : "ghost"} asChild size="sm" className="h-8 text-red-600 hover:text-red-700 hover:bg-red-100/50">
+            <Link href="/dashboard/admin/volunteers?status=REJECTED">
+              <AlertCircle className="w-4 h-4 mr-2" /> Rejected
+            </Link>
           </Button>
         </div>
       </div>

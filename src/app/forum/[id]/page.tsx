@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
@@ -7,6 +8,7 @@ import { VerifiedBadge } from "@/components/ui/VerifiedBadge";
 import { ReportDialog } from "@/components/forum/ReportDialog";
 import { UpvoteButton, MarkResolvedButton, AnswerForm } from "@/components/forum/ForumInteractions";
 import { AdminQuickActions } from "../AdminQuickActions";
+import { BackButton } from "@/components/ui/back-button";
 
 export default async function QuestionDetailPage({
   params,
@@ -67,7 +69,7 @@ export default async function QuestionDetailPage({
   return (
     <div className="min-h-[calc(100vh-16rem)] bg-muted/20 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto space-y-8">
-        
+        <BackButton />
         {/* Question Block */}
         <div className="bg-background rounded-xl shadow-sm border border-border overflow-hidden">
           <div className="p-6">
@@ -114,9 +116,9 @@ export default async function QuestionDetailPage({
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-3">
                       {answer.advisor.image ? (
-                        <img src={answer.advisor.image} alt={answer.advisor.fullName} className="w-10 h-10 rounded-full object-cover" />
+                        <Image src={answer.advisor.image} alt={answer.advisor.fullName} width={40} height={40} className="rounded-full object-cover" />
                       ) : (
-                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+                        <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold">
                           {answer.advisor.fullName.charAt(0)}
                         </div>
                       )}

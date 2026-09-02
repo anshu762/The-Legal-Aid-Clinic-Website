@@ -17,7 +17,7 @@ const schema = z.object({
   language: z.string().min(1, "Language is required"),
   bodyMarkdown: z.string().min(10, "Content must be at least 10 characters"),
   pdfUrl: z.string().optional(),
-  isActive: z.boolean().default(true),
+  isActive: z.boolean(),
 });
 
 type FormData = z.infer<typeof schema>;

@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
+import { BackButton } from "@/components/ui/back-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,23 +25,27 @@ export default function AskQuestionPage() {
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
+      title: "",
+      body: "",
+      category: "",
       isAnonymous: false,
-    }
+    },
   });
 
   const onSubmit = async (data: z.infer<typeof schema>) => {
+    setError("");
     try {
-      setError("");
-      const res = await askQuestion(data);
-      router.push(`/forum/${res.id}`);
-    } catch (err: any) {
-      setError(err.message || "Failed to post question.");
+      const q = await askQuestion(data);
+      router.push(`/forum/${q.id}`);
+    } catch (e: any) {
+      setError(e.message || "Failed to submit question");
     }
   };
 
   return (
     <div className="min-h-[calc(100vh-16rem)] bg-muted/20 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl mx-auto">
+        <BackButton />
         <Card className="shadow-lg border-border">
           <CardHeader>
             <CardTitle className="text-2xl font-bold font-serif text-foreground">Ask a Legal Question</CardTitle>
@@ -110,7 +115,7 @@ export default function AskQuestionPage() {
 
               <div className="flex justify-end gap-4">
                 <Button type="button" variant="outline" onClick={() => router.back()}>Cancel</Button>
-                <Button type="submit" disabled={isSubmitting}>
+                <Button type="submit" isLoading={isSubmitting}>
                   {isSubmitting ? "Posting..." : "Post Question"}
                 </Button>
               </div>

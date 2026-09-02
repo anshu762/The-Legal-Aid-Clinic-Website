@@ -106,7 +106,7 @@ function ResetPasswordForm() {
             
             {error && <p className="text-destructive text-sm bg-destructive/10 p-2 rounded">{error}</p>}
             
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full" isLoading={isLoading}>
               {isLoading ? "Resetting..." : "Reset Password"}
             </Button>
           </form>

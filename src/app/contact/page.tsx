@@ -5,17 +5,21 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
+import { BackButton } from "@/components/ui/back-button";
+import { useAlertModal } from "@/components/ui/alert-modal";
 import { submitGeneralReport } from "./actions";
 
 export default function ContactPage() {
   const [isReport, setIsReport] = useState(false);
   const [isUrgent, setIsUrgent] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const { showAlert } = useAlertModal();
   const [loading, setLoading] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+    
     const formData = new FormData(e.currentTarget);
     
     try {
@@ -26,9 +30,12 @@ export default function ContactPage() {
         isConcern: isReport,
         isUrgent: isReport && isUrgent
       });
-      setIsSubmitted(true);
-    } catch (e) {
-      alert("Failed to submit");
+      showAlert("Message Sent!", "Thank you for reaching out. We have received your message.", "success");
+      e.currentTarget.reset();
+      setIsReport(false);
+      setIsUrgent(false);
+    } catch (err) {
+      showAlert("Error", "Failed to submit your message. Please try again later.", "error");
     }
     setLoading(false);
   };
@@ -36,6 +43,7 @@ export default function ContactPage() {
   return (
     <div className="min-h-[calc(100vh-16rem)] bg-muted/20 py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl mx-auto">
+        <BackButton />
         <div className="text-center mb-10">
           <h1 className="text-4xl font-extrabold text-foreground font-serif">Contact Us</h1>
           <p className="mt-4 text-lg text-muted-foreground">We're here to help. Send us a message or report a concern.</p>

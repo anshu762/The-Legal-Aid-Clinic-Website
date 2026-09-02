@@ -1,29 +1,39 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { processReport } from "./actions";
+import { processReport as resolveReport } from "./actions";
 import { Badge } from "@/components/ui/badge";
+import { useAlertModal } from "@/components/ui/alert-modal";
 
 export function ReportRow({ report }: { report: any }) {
-  const [loading, setLoading] = useState(false);
-  const [note, setNote] = useState("");
+  const router = useRouter();
+  const { showAlert, showConfirm } = useAlertModal();
+  const [isResolving, setIsResolving] = useState(false);
+  const [resolutionNote, setResolutionNote] = useState("");
 
-  const handleAction = async (action: "DISMISS" | "HIDE" | "REMOVE") => {
-    if (!note) {
-      alert("Please provide a resolution note for the audit trail.");
+  const handleResolve = async (action: "DISMISS" | "HIDE" | "REMOVE") => {
+    if (action !== "DISMISS" && !resolutionNote.trim()) {
+      showAlert("Warning", "Please provide a resolution note for the audit trail.", "info");
       return;
     }
     
-    if (action === "REMOVE" && !confirm("Remove this content from public view completely?")) return;
-
-    setLoading(true);
-    try {
-      await processReport(report.id, action, note);
-    } catch (e: any) {
-      alert("Failed: " + e.message);
+    if (action === "REMOVE") {
+      const confirmed = await showConfirm("Remove Content?", "Remove this content from public view completely?");
+      if (!confirmed) return;
     }
-    setLoading(false);
+
+    setIsResolving(true);
+    try {
+      await resolveReport(report.id, action, resolutionNote || "");
+      showAlert("Success", "Report resolved successfully.", "success");
+      router.refresh();
+    } catch (e: any) {
+      showAlert("Error", "Failed: " + e.message, "error");
+    } finally {
+      setIsResolving(false);
+    }
   };
 
   return (
@@ -53,19 +63,19 @@ export function ReportRow({ report }: { report: any }) {
             type="text"
             className="flex h-8 w-full rounded-md border border-input bg-background px-3 py-1 text-sm"
             placeholder="Audit/resolution note..."
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
+            value={resolutionNote}
+            onChange={(e) => setResolutionNote(e.target.value)}
           />
           <div className="flex gap-2">
-            <Button size="sm" variant="outline" disabled={loading} onClick={() => handleAction("DISMISS")}>
+            <Button size="sm" variant="outline" disabled={isResolving} onClick={() => handleResolve("DISMISS")}>
               Dismiss
             </Button>
             {report.targetType !== "GENERAL" && (
               <>
-                <Button size="sm" variant="secondary" disabled={loading} onClick={() => handleAction("HIDE")}>
+                <Button size="sm" variant="secondary" disabled={isResolving} onClick={() => handleResolve("HIDE")}>
                   Hide
                 </Button>
-                <Button size="sm" variant="destructive" disabled={loading} onClick={() => handleAction("REMOVE")}>
+                <Button size="sm" variant="destructive" disabled={isResolving} onClick={() => handleResolve("REMOVE")}>
                   Remove
                 </Button>
               </>

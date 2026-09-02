@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
+import { MessageSquare, Filter, Clock, CheckCircle2, FileCheck } from "lucide-react";
+
 export default async function AdminConsultationsPage({
   searchParams,
 }: {
@@ -26,21 +28,36 @@ export default async function AdminConsultationsPage({
   }) as any[];
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold font-serif">Consultation Oversight</h1>
-        <div className="flex gap-2">
-          <Button variant={!statusFilter ? "default" : "outline"} asChild size="sm">
-            <Link href="/dashboard/admin/consultations">All</Link>
+    <div className="space-y-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold font-serif flex items-center gap-2">
+            <MessageSquare className="w-8 h-8 text-primary" />
+            Consultation Oversight
+          </h1>
+          <p className="text-muted-foreground mt-1">Manage and assign incoming legal consultation requests.</p>
+        </div>
+        
+        <div className="flex bg-muted/30 p-1 rounded-lg border border-border">
+          <Button variant={!statusFilter ? "secondary" : "ghost"} asChild size="sm" className="h-8">
+            <Link href="/dashboard/admin/consultations">
+              <Filter className="w-4 h-4 mr-2" /> All
+            </Link>
           </Button>
-          <Button variant={statusFilter === "PENDING" ? "default" : "outline"} asChild size="sm">
-            <Link href="/dashboard/admin/consultations?status=PENDING">Pending</Link>
+          <Button variant={statusFilter === "PENDING" ? "secondary" : "ghost"} asChild size="sm" className="h-8 text-yellow-600 hover:text-yellow-700 hover:bg-yellow-100/50">
+            <Link href="/dashboard/admin/consultations?status=PENDING">
+              <Clock className="w-4 h-4 mr-2" /> Pending
+            </Link>
           </Button>
-          <Button variant={statusFilter === "CONFIRMED" ? "default" : "outline"} asChild size="sm">
-            <Link href="/dashboard/admin/consultations?status=CONFIRMED">Confirmed</Link>
+          <Button variant={statusFilter === "CONFIRMED" ? "secondary" : "ghost"} asChild size="sm" className="h-8 text-blue-600 hover:text-blue-700 hover:bg-blue-100/50">
+            <Link href="/dashboard/admin/consultations?status=CONFIRMED">
+              <CheckCircle2 className="w-4 h-4 mr-2" /> Confirmed
+            </Link>
           </Button>
-          <Button variant={statusFilter === "COMPLETED" ? "default" : "outline"} asChild size="sm">
-            <Link href="/dashboard/admin/consultations?status=COMPLETED">Completed</Link>
+          <Button variant={statusFilter === "COMPLETED" ? "secondary" : "ghost"} asChild size="sm" className="h-8 text-green-600 hover:text-green-700 hover:bg-green-100/50">
+            <Link href="/dashboard/admin/consultations?status=COMPLETED">
+              <FileCheck className="w-4 h-4 mr-2" /> Completed
+            </Link>
           </Button>
         </div>
       </div>

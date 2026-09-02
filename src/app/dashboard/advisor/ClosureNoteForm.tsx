@@ -4,7 +4,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { saveClosureNote } from "./actions";
 
+import { useAlertModal } from "@/components/ui/alert-modal";
+
 export function ClosureNoteForm({ consultationId, initialNote }: { consultationId: string, initialNote: string }) {
+  const { showAlert } = useAlertModal();
   const [note, setNote] = useState(initialNote);
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -15,9 +18,10 @@ export function ClosureNoteForm({ consultationId, initialNote }: { consultationI
     try {
       await saveClosureNote(consultationId, note);
       setSaved(true);
+      showAlert("Success", "Closure note has been saved.", "success");
       setTimeout(() => setSaved(false), 2000);
     } catch (err) {
-      alert("Failed to save note");
+      showAlert("Error", "Failed to save note.", "error");
     }
     setLoading(false);
   };
@@ -37,7 +41,7 @@ export function ClosureNoteForm({ consultationId, initialNote }: { consultationI
       />
       <div className="flex justify-between items-center">
         <span className="text-xs text-green-600 font-medium">{saved ? "Saved!" : ""}</span>
-        <Button type="submit" size="sm" variant="secondary" disabled={loading}>
+        <Button type="submit" size="sm" variant="secondary" isLoading={loading}>
           {loading ? "Saving..." : "Save Note"}
         </Button>
       </div>

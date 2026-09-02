@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
+import { BackButton } from "@/components/ui/back-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -88,6 +89,7 @@ export default function VolunteerRegistrationPage() {
   return (
     <div className="min-h-[calc(100vh-16rem)] bg-muted/20 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
+        <BackButton />
         <Card className="shadow-lg border-border">
           <CardHeader className="text-center">
             <CardTitle className="text-3xl font-bold font-serif text-foreground">Volunteer With Us</CardTitle>
@@ -190,7 +192,7 @@ export default function VolunteerRegistrationPage() {
               {error && <div className="text-destructive text-sm bg-destructive/10 p-3 rounded">{error}</div>}
 
               <div className="flex justify-end pt-4">
-                <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
+                <Button type="submit" isLoading={isSubmitting} className="w-full sm:w-auto">
                   {isSubmitting ? "Submitting Application..." : "Submit Application"}
                 </Button>
               </div>

@@ -16,6 +16,7 @@ function AuthForm() {
   const [fullName, setFullName] = useState("");
   const [role, setRole] = useState("SEEKING_HELP");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (searchParams.get("mode") === "register") {
@@ -26,6 +27,7 @@ function AuthForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true);
 
     if (isLogin) {
       const res = await signIn("credentials", {
@@ -36,6 +38,7 @@ function AuthForm() {
 
       if (res?.error) {
         setError("Invalid email or password");
+        setIsLoading(false);
       } else {
         router.push("/dashboard");
       }
@@ -57,9 +60,11 @@ function AuthForm() {
         } else {
           const data = await res.json();
           setError(data.error || "Failed to register");
+          setIsLoading(false);
         }
       } catch (err) {
         setError("Something went wrong");
+        setIsLoading(false);
       }
     }
   };
@@ -87,16 +92,32 @@ function AuthForm() {
                   placeholder="John Doe"
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Role</label>
-                <select
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                >
-                  <option value="SEEKING_HELP">Seeking Help</option>
-                  <option value="LEGAL_ADVISOR">Legal Advisor</option>
-                </select>
+              <div className="space-y-3">
+                <label className="text-sm font-medium">I want to...</label>
+                <div className="grid grid-cols-2 gap-4">
+                  <button
+                    type="button"
+                    onClick={() => setRole("SEEKING_HELP")}
+                    className={`flex flex-col items-center justify-center p-4 border rounded-xl transition-all ${
+                      role === "SEEKING_HELP"
+                        ? "border-primary bg-primary/10 text-primary ring-2 ring-primary/20"
+                        : "border-border hover:border-primary/50 text-muted-foreground hover:bg-muted/50"
+                    }`}
+                  >
+                    <span className="font-semibold text-sm">Get Help</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setRole("LEGAL_ADVISOR")}
+                    className={`flex flex-col items-center justify-center p-4 border rounded-xl transition-all ${
+                      role === "LEGAL_ADVISOR"
+                        ? "border-primary bg-primary/10 text-primary ring-2 ring-primary/20"
+                        : "border-border hover:border-primary/50 text-muted-foreground hover:bg-muted/50"
+                    }`}
+                  >
+                    <span className="font-semibold text-sm">Volunteer</span>
+                  </button>
+                </div>
               </div>
             </>
           )}
@@ -121,8 +142,7 @@ function AuthForm() {
           </div>
           
           {error && <p className="text-red-500 text-sm">{error}</p>}
-          
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-full" isLoading={isLoading}>
             {isLogin ? "Sign In" : "Register"}
           </Button>
         </form>
@@ -133,14 +153,16 @@ function AuthForm() {
               Forgot your password?
             </a>
           )}
-          <button
-            onClick={() => setIsLogin(!isLogin)}
-            className="text-primary hover:underline font-medium"
-          >
-            {isLogin
-              ? "Don't have an account? Register"
-              : "Already have an account? Sign in"}
-          </button>
+          <div className="text-muted-foreground text-sm flex items-center justify-center gap-1">
+            <span>{isLogin ? "Don't have an account?" : "Already have an account?"}</span>
+            <button
+              type="button"
+              onClick={() => setIsLogin(!isLogin)}
+              className="text-primary hover:underline font-semibold"
+            >
+              {isLogin ? "Register" : "Sign in"}
+            </button>
+          </div>
         </div>
       </CardContent>
     </Card>
