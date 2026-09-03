@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Shield, Users, AlertTriangle, MessageSquare, FileText, BarChart3 } from "lucide-react";
+import { Shield, Users, AlertTriangle, MessageSquare, FileText, BarChart3, TrendingUp } from "lucide-react";
 
 export function AdminSidebar() {
   const pathname = usePathname();
 
   const navItems = [
     { href: "/dashboard/admin", label: "Overview", icon: BarChart3, exact: true },
+    { href: "/dashboard/admin/analytics", label: "Analytics & Trends", icon: TrendingUp },
     { href: "/dashboard/admin/volunteers", label: "Volunteers", icon: Users },
     { href: "/dashboard/admin/moderation", label: "Moderation Queue", icon: AlertTriangle },
     { href: "/dashboard/admin/consultations", label: "Consultations", icon: MessageSquare },

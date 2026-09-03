@@ -60,3 +60,9 @@ This document provides context for any AI agent interacting with this codebase.
 - **DLSA Directory:** Added a static state-to-nearest-DLSA lookup (`lib/dlsa-directory.ts`) integrated into NALSA/DLSA explainers.
 - **Centralized Emails:** Unified transactional emails into `lib/email/sender.ts` logging to `NotificationLog` (with a new `channel` enum for future SMS/WhatsApp support). Covered events: Registration, Verification, Consultations, and Forum Answers.
 - **Database:** Added `KnowYourRightsArticle.slug` (unique), `NotificationChannel` enum, and `PasswordResetToken` for secure password recovery.
+
+### Phase 8: Admin Analytics, Metric Aggregations & Reporting Engine
+- **Visual Analytics:** Interactive dashboards at `/dashboard/admin/analytics` powered by Recharts (Volume over time, Category distribution, Response times, and Geographic spread).
+- **Time Filtering:** Flexible date-range filters (7 Days, 30 Days, 90 Days, and All Time).
+- **CSV Data Export:** One-click CSV downloads for analytics tables allowing external audit and operational reporting.
+- **Analytics Seeding:** Dedicated seed script (`scripts/seed-analytics.ts`) to simulate realistic operational metrics.
