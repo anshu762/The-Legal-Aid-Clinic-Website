@@ -155,9 +155,11 @@ model ConsultationRequest {
   closureNote            String?
   requesterFeedbackRating Int?
   requesterFeedbackText  String?
+  createdAt              DateTime           @default(now())
 
   @@index([status])
   @@index([category])
+  @@index([createdAt])
 }
 
 model Report {

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { confirmConsultationMatch } from "@/app/dashboard/admin/consultations/actions";
 import { useRouter } from "next/navigation";
+import { useAlertModal } from "@/components/ui/alert-modal";
 
 export function MatchForm({ 
   requestId, 

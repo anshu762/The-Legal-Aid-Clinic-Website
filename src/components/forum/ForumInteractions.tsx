@@ -6,9 +6,19 @@ import { toggleUpvote, markResolved, submitAnswer } from "@/app/forum/actions";
 import { useAlertModal } from "@/components/ui/alert-modal";
 import { useRouter } from "next/navigation";
 
-export function UpvoteButton({ answerId, initialCount, initialUpvoted }: { answerId: string, initialCount: number, initialUpvoted: boolean }) {
+export function UpvoteButton({ 
+  answerId, 
+  initialCount, 
+  initialUpvoted, 
+  initiallyUpvoted 
+}: { 
+  answerId: string; 
+  initialCount: number; 
+  initialUpvoted?: boolean; 
+  initiallyUpvoted?: boolean; 
+}) {
   const { showAlert } = useAlertModal();
-  const [upvoted, setUpvoted] = useState(initialUpvoted);
+  const [upvoted, setUpvoted] = useState(initialUpvoted ?? initiallyUpvoted ?? false);
   const [count, setCount] = useState(initialCount);
   const [loading, setLoading] = useState(false);
 

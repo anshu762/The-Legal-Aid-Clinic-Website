@@ -92,7 +92,7 @@ export async function getAnalyticsData(startDate: Date, endDate: Date) {
     })),
     geoSpread: geoSpread.map(g => ({
       location: g.cityState,
-      count: g._count.id,
+      count: (g._count as any)?.id ?? 0,
     })),
   };
 }

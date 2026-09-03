@@ -151,7 +151,7 @@ export default async function QuestionDetailPage({
                   </div>
                   
                   <div className="flex items-center justify-between border-t border-border pt-4">
-                    <UpvoteButton answerId={answer.id} initialCount={answer.upvoteCount} initiallyUpvoted={!!hasUpvoted} />
+                    <UpvoteButton answerId={answer.id} initialCount={answer.upvoteCount} initialUpvoted={!!hasUpvoted} />
                     <span className="text-xs text-muted-foreground">Answered on {answer.createdAt.toLocaleDateString()}</span>
                   </div>
                 </div>
