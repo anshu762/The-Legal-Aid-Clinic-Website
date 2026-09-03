@@ -4,6 +4,8 @@ import path from "path";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest, { params }: { params: Promise<{ filename: string }> }) {
   const session = await getServerSession(authOptions);
   
