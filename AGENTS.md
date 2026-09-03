@@ -66,3 +66,9 @@ This document provides context for any AI agent interacting with this codebase.
 - **Time Filtering:** Flexible date-range filters (7 Days, 30 Days, 90 Days, and All Time).
 - **CSV Data Export:** One-click CSV downloads for analytics tables allowing external audit and operational reporting.
 - **Analytics Seeding:** Dedicated seed script (`scripts/seed-analytics.ts`) to simulate realistic operational metrics.
+
+### Phase 9: Automated End-to-End Testing & Production Resilience
+- **Playwright Test Suite:** Automated testing suite (`tests/core-flows.spec.ts`) validating critical user journeys (client login, volunteer registration, consultation booking, admin moderation).
+- **Test Scripts:** Unified test commands (`npm run test:ui`, `npm run test:live`, `npm run test:headless`).
+- **Production Error Boundaries:** Global error fallback component (`src/app/error.tsx`) and branded 404 handler (`src/app/not-found.tsx`).
+- **Production Hardening:** Rigorous UI feedback with custom accessible alert and confirmation dialogs.
