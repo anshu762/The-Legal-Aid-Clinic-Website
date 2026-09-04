@@ -66,7 +66,7 @@ export default function RequestConsultationPage() {
         
         if (res.ok) {
           const data = await res.json();
-          attachmentUrl = `/api/attachments/${data.filename}`;
+          attachmentUrl = data.filename.startsWith("http") ? data.filename : `/api/attachments/${data.filename}`;
         } else {
           showAlert("Upload Failed", "Failed to upload attachment", "error");
           setIsSubmitting(false);

@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile } from "fs/promises";
+import { put } from "@vercel/blob";
 import path from "path";
 import crypto from "crypto";
-import fs from "fs";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 
@@ -20,22 +19,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    const buffer = Buffer.from(await file.arrayBuffer());
-    
     // Create safe filename
     const ext = path.extname(file.name) || ".pdf";
     const filename = `${crypto.randomUUID()}${ext}`;
     
-    // Ensure uploads directory exists
-    const uploadDir = path.join(process.cwd(), "uploads", "attachments");
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
+    const blob = await put(filename, file, { access: 'public' });
 
-    const filepath = path.join(uploadDir, filename);
-    await writeFile(filepath, buffer);
-
-    return NextResponse.json({ filename });
+    return NextResponse.json({ filename: blob.url });
   } catch (error) {
     console.error("Upload error:", error);
     return NextResponse.json({ error: "Failed to upload file" }, { status: 500 });
